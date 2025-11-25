@@ -24,7 +24,7 @@ Last year there were {{< get-event-last-year-info "events" >}} events around the
 Last year there were {{< get-event-last-year-info "events" >}} events in {{< get-event-last-year-info "countries" >}} different countries around the world.
 ////
 
-Beyond officially run community spaces, there are many https://www.freebsd.org/usergroups/[User Groups], along with highly active FreeBSD communities on link:https://www.reddit.com/r/freebsd/[Reddit], https://wiki.freebsd.org/Discord[Discord], https://stackoverflow.com/questions/tagged/freebsd[StackOverflow], https://serverfault.com/questions/tagged/freebsd[ServerFault], and https://www.meetup.com/topics/freebsd/[MeetUp.com], among many other technology-related spaces.
+Beyond officially run community spaces, there are many link:/usergroups/[User Groups], along with highly active FreeBSD communities on link:https://www.reddit.com/r/freebsd/[Reddit], https://wiki.freebsd.org/Discord/DiscordServer[Discord], https://stackoverflow.com/questions/tagged/freebsd[StackOverflow], https://serverfault.com/questions/tagged/freebsd[ServerFault], and https://www.meetup.com/topics/freebsd/[MeetUp.com], among many other technology-related spaces.
 
 The https://wiki.freebsd.org/[FreeBSD wiki] contains information about development and related projects.
 

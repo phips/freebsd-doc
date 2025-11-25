@@ -3,7 +3,7 @@
 baseURL = "https://www.freebsd.org/"
 title = "The FreeBSD Project"
 copyright = "BSD 2-clause 'Simplified' License"
-DefaultContentLanguage = "en"
+defaultContentLanguage = "en"
 defaultContentLanguageInSubdir = false
 theme = "beastie"
 disableKinds = [ "taxonomy" ]
@@ -13,6 +13,11 @@ ignoreFiles = [ "\\.po$" ]
 enableRobotsTXT = true
 enableGitInfo = true
 preserveTOC = true
+
+[params]
+  isOnline = true
+  description = "The FreeBSD Project"
+  editBaseUrl = "https://github.com/freebsd/freebsd-doc/blob/main/website/content/"
 
 [markup.asciidocExt]
     preserveTOC = true
