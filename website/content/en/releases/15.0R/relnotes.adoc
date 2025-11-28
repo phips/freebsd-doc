@@ -199,6 +199,18 @@ This section lists the various Security Advisories and Errata Notices since {rel
 |https://www.freebsd.org/security/advisories/FreeBSD-SA-25:07.libarchive.asc[FreeBSD-SA-25:07.libarchive]
 |08 August 2025
 |Integer overflow in libarchive leading to double free
+
+|https://www.freebsd.org/security/advisories/FreeBSD-SA-25:08.openssl.asc[FreeBSD-SA-25:08.openssl]
+|30 September 2025
+|Multiple vulnerabilities in OpenSSL
+
+|https://www.freebsd.org/security/advisories/FreeBSD-SA-25:09.netinet.asc[FreeBSD-SA-25:09.netinet]
+|22 October 2025
+|`SO_REUSEPORT_LB` breaks man:connect[2] for UDP sockets
+
+|https://www.freebsd.org/security/advisories/FreeBSD-SA-25:10.unbound.asc[FreeBSD-SA-25:10.unbound]
+|26 November 2025
+|Cache poison in local-unbound service
 |===
 
 [[errata]]
@@ -353,7 +365,7 @@ This section lists the various Security Advisories and Errata Notices since {rel
 
 |https://www.freebsd.org/security/advisories/FreeBSD-EN-25:11.ena.asc[FreeBSD-EN-25:11:ena]
 |02 July 2025
-|ena resets and kernel panic on Nitro v4 or newer instances
+|`ena` resets and kernel panic on Nitro v4 or newer instances
 
 |https://www.freebsd.org/security/advisories/FreeBSD-EN-25:12.efi.asc[FreeBSD-EN-25:12:efi]
 |08 August 2025
@@ -366,6 +378,22 @@ This section lists the various Security Advisories and Errata Notices since {rel
 |https://www.freebsd.org/security/advisories/FreeBSD-EN-25:14.route.asc[FreeBSD-EN-25:14:route]
 |08 August 2025
 |man:route[8] monitor buffers too much when redirected to a file
+
+|https://www.freebsd.org/security/advisories/FreeBSD-EN-25:15.arm64.asc[FreeBSD-EN-25:15:arm64]
+|16 September 2025
+|arm64 man:syscall[2] allows unprivileged user to panic kernel
+
+|https://www.freebsd.org/security/advisories/FreeBSD-EN-25:16.vfs.asc[FreeBSD-EN-25:16:vfs]
+|16 September 2025
+|man:copy_file_range[2] fails to set output parameters
+
+|https://www.freebsd.org/security/advisories/FreeBSD-EN-25:17.bnxt.asc[FreeBSD-EN-25:17:bnxt]
+|16 September 2025
+|man:bnxt[4] fails to set media type in some cases
+
+|https://www.freebsd.org/security/advisories/FreeBSD-EN-25:18.freebsd-update.asc[FreeBSD-EN-25:18:freebsd-update]
+|30 September 2025
+|man:freebsd-update[8] installs libraries in incorrect order
 |===
 
 [[userland]]
@@ -559,6 +587,27 @@ gitref:e77813f7e4a3[repository=src]
 The accuracy of man:asinf[3] and man:acosf[3] has improved.
 gitref:33c82f11c267[repository=src]
 
+The man:setgroups[2] and man:getgroups[2] system calls and the man:initgroups[3] library function have been changed to avoid setting or reporting the effective group ID, now only concerning themselves with the supplementary groups.
+The main purpose of this change is to avoid security issues going forward by becoming compatible with Linux/glibc, OpenBSD, NetBSD and illumos-based systems.
+Consequently, almost all portable applications should already be compliant with this new behavior and will continue to work correctly or even get fixed in the process (see, e.g., gitref:239e8c98636a[repository=src] for an example affecting OpenSSH).
+However, out of caution, porters, system administrators and users are advised to audit their applications using man:setgroups[2], man:getgroups[2] and man:initgroups[3], watching out for the following points.
+Applications must be using man:setgid[2] or man:setegid[2] in addition to man:setgroups[2] or man:initgroups[3] to set the effective group ID.
+They must not treat the first element of the array returned by man:getgroups[2] specially, but instead as any other supplementary group.
+For more information, please consult the SECURITY CONSIDERATIONS sections that have been added to the man:setgroups[2], man:getgroups[2] and man:initgroups[3] manual pages.
+Compatibility system calls and library functions have been provided so that binaries and libraries compiled on FreeBSD 14 systems or earlier will continue to work exactly as before.
+gitref:9da2fe96ff2e[repository=src],
+gitref:8878569103a3[repository=src],
+gitref:7132fb5edbc9[repository=src],
+gitref:2932e6f59bff[repository=src],
+gitref:8878569103a3[repository=src]
+(Sponsored by The FreeBSD Foundation.)
+
+`libc` contains compatibility functions enabling running executables/libraries compiled for older versions of FreeBSD.
+Those that are themselves using compatibility system calls would not reference them correctly, causing misbehavior at runtime.
+This has been fixed.
+gitref:47f5f89dbd27[repository=src]
+(Sponsored by The FreeBSD Foundation.)
+
 [[userland-deprecated-programs]]
 === Deprecated Applications
 
@@ -720,6 +769,12 @@ The local stream (AF_UNIX/SOCK_STREAM) and sequenced packet stream (AF_UNIX/SOCK
 The SOCK_SEQPACKET socket has been brought to the specification and now behaves as a true stream socket, while in previous FreeBSD releases it could exhibit features of
 a datagram socket.  Applications that were using SOCK_SEQPACKET incorrectly and relied on old implementation bugs may need to be adjusted.
 gitref:d15792780760[repository=src]
+
+The effective group ID is now stored in the new `cr_gid` field of `struct cred` and has been removed as the first element of `cr_groups[]`, which now only contains the supplementary groups.
+All downstream and out-of-tree modules using `cr_groups[0]` must be fixed to use `cr_gid` instead, and surrounding code that loops on `cr_groups[]` elements excluding `cr_groups[0]`, i.e., that intends to act on supplementary groups only, also needs to be adjusted as now supplementary groups start at `&cr_groups[0]` instead of `&cr_groups[1]`.
+Code that needs to be portable to both 15.0 and earlier versions can use `cr_gid`, which existed also previously as a macro, and can test the truth value of `&cr_groups[0] != &cr_gid` to know how to browse the supplementary groups adequately.
+gitref:be1f7435ef218b1df35[repository=src]
+(Sponsored by the FreeBSD Foundation.)
 
 [[drivers]]
 == Devices and Drivers
